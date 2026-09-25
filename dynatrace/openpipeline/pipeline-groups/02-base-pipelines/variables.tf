@@ -23,20 +23,8 @@ variable "security_context_field" {
   default     = "k8s.namespace.name"
 }
 
-variable "security_context_fallback" {
-  description = "Value assigned to dt.security_context when security_context_field is absent."
-  type        = string
-  default     = "unassigned"
-}
-
 variable "cost_center_field" {
   description = "Record field whose value becomes dt.cost.costcenter."
   type        = string
   default     = "k8s.cluster.name"
-}
-
-variable "cost_center_fallback" {
-  description = "Value assigned to dt.cost.costcenter when cost_center_field is absent."
-  type        = string
-  default     = "unattributed"
 }

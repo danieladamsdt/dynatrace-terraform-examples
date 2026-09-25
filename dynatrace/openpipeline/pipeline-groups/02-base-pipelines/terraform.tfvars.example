@@ -6,8 +6,8 @@
 
 name_prefix = "platform"
 
-security_context_field    = "k8s.namespace.name"
-security_context_fallback = "unassigned"
-
-cost_center_field    = "k8s.cluster.name"
-cost_center_fallback = "unattributed"
+# A fallback for records missing these fields is deliberately not offered:
+# the API rejects defaultValue on a field-typed securityContext/costAllocation
+# value, even though the provider schema marks it optional.
+security_context_field = "k8s.namespace.name"
+cost_center_field      = "k8s.cluster.name"

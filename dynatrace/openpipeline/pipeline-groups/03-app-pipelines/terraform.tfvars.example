@@ -1,6 +1,10 @@
 # Copy to terraform.tfvars and adjust. One copy per Dynatrace environment.
 # Never commit the real file — .gitignore only tracks *.tfvars.example.
 #
+# As shipped, this file applies cleanly against any tenant: no bucket_name is
+# set, so nothing here depends on buckets existing. Set bucket_name per
+# application once you know the bucket names in the target tenant.
+#
 # Credentials come from the environment:
 #   export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
 #   export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
@@ -24,7 +28,10 @@ applications = {
     display_name   = "Checkout API logs"
     route_priority = 100
     route_matcher  = "matchesValue(k8s.namespace.name, \"checkout\")"
-    bucket_name    = "logs_checkout"
+
+    # Uncomment and set to a Grail bucket that ALREADY EXISTS in the target
+    # tenant. Omitted, storage falls back to the group/default behaviour.
+    # bucket_name = "<existing-bucket>"
 
     added_fields = {
       "owning_team" = "payments"
@@ -38,7 +45,8 @@ applications = {
     display_name   = "Search service logs"
     route_priority = 200
     route_matcher  = "matchesValue(k8s.namespace.name, \"search\")"
-    bucket_name    = "logs_search"
+
+    # bucket_name = "<existing-bucket>"   # see note above
 
     added_fields = {
       "owning_team" = "discovery"

@@ -185,3 +185,9 @@ version you verified against in the example's README:
 terraform fmt -check -recursive
 terraform validate
 ```
+
+**Then apply it against a throwaway environment.** A schema check is not a
+validity check: the provider schema accepts attribute values the API rejects,
+so a config can pass `fmt`, `validate`, and `plan` and still fail at `apply`.
+Confirm the apply succeeds, that a second `plan` reports no drift, and that
+`terraform destroy` cleans up.

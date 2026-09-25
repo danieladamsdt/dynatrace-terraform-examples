@@ -37,13 +37,16 @@ resource "dynatrace_openpipeline_v2_logs_pipelines" "pre_member" {
         matcher     = "true"
         enabled     = true
 
+        # No default_value here: the provider schema marks it optional, but the
+        # API rejects it for a field-typed securityContext value
+        # ("defaultValue: Must be null"). Records missing the source field get
+        # no security context rather than a fallback one.
         security_context {
           value {
             type = "field"
 
             field {
               source_field_name = var.security_context_field
-              default_value     = var.security_context_fallback
             }
           }
         }
@@ -62,8 +65,10 @@ resource "dynatrace_openpipeline_v2_logs_pipelines" "pre_member" {
 
         fields_add {
           fields {
+            # Not "dt.openpipeline.managed_by": the dt.* namespace is reserved
+            # and the API rejects writes to it ("name: Must not be modified").
             field {
-              name  = "dt.openpipeline.managed_by"
+              name  = "openpipeline.managed_by"
               value = "terraform"
             }
           }
@@ -101,13 +106,14 @@ resource "dynatrace_openpipeline_v2_logs_pipelines" "post_member" {
         matcher     = "true"
         enabled     = true
 
+        # Same API restriction as securityContext above: no default_value on a
+        # field-typed costAllocation value.
         cost_allocation {
           value {
             type = "field"
 
             field {
               source_field_name = var.cost_center_field
-              default_value     = var.cost_center_fallback
             }
           }
         }

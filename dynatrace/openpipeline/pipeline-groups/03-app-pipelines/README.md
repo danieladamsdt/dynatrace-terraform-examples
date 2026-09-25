@@ -13,7 +13,7 @@ applications = {
     display_name   = "Checkout API logs"
     route_priority = 100
     route_matcher  = "matchesValue(k8s.namespace.name, \"checkout\")"
-    bucket_name    = "logs_checkout"
+    bucket_name    = "logs_checkout" # must already exist in the tenant
     added_fields   = { owning_team = "payments" }
     drop_matcher   = "matchesPhrase(content, \"health check\")"
   }
@@ -32,8 +32,16 @@ Set your credentials first — see the
 the bash/zsh, PowerShell, and Command Prompt forms.
 
 Copy the example variables file (the only step whose syntax is
-platform-specific), then edit it, including the base pipeline IDs from
-[`../02-base-pipelines`](../02-base-pipelines/):
+platform-specific), then edit it. Two things must be replaced with real values
+from your tenant:
+
+- **`pre_member_base_pipeline_ids` / `post_member_base_pipeline_ids`** — the
+  placeholder IDs must be swapped for `terraform output` from
+  [`../02-base-pipelines`](../02-base-pipelines/).
+- **`bucket_name`** per application — commented out by default, so the file
+  applies cleanly as shipped. Uncomment it only once you know the name of a
+  Grail bucket that **already exists** in the target tenant; nothing here
+  creates one, and a wrong name fails partway through the apply.
 
 ```sh
 # macOS / Linux

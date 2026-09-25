@@ -173,7 +173,7 @@ applications = {
     display_name   = "Checkout API logs"
     route_priority = 100
     route_matcher  = "matchesValue(k8s.namespace.name, \"checkout\")"
-    bucket_name    = "logs_checkout"
+    bucket_name    = "logs_checkout" # must already exist in the tenant
     added_fields   = { owning_team = "payments" }
   }
 }
@@ -224,15 +224,40 @@ it only avoids a destroy/create of unrelated resources.)
 
 ### Deleting an application
 
-Remove its entry from `applications` and apply. Order matters, and Terraform
-gets it right on its own **only because the group and routing reference the
-pipeline through `.id`**: the routing table and group membership are updated
-before the pipeline is destroyed. A pipeline still referenced by a group or a
-routing rule cannot be deleted.
+A pipeline still referenced by a group or a routing rule cannot be deleted —
+the API rejects the `DELETE` with `Constraints violated`.
 
-If you ever hardcode an ID instead of referencing the resource, you lose that
-edge in the dependency graph and the destroy fails with a reference error. Fix
-it by removing the reference and applying, then destroying the pipeline.
+**Removing an entry from `applications` and applying does not currently work.**
+Verified against provider v1.105.0 on a live environment: Terraform destroys the
+member pipeline *before* updating the group and routing that reference it, and
+the apply fails:
+
+```
+dynatrace_openpipeline_v2_logs_pipelines.member["legacy-batch"]: Destroying...
+Error: API error: DELETE .../settings/objects/vu9U3...: Constraints violated.
+```
+
+Referencing through `.id` is still correct and necessary, but it is not
+sufficient. Terraform only guarantees ordering between a dependency's *destroy*
+and a dependent's *destroy* — not between a destroy and a dependent's
+**in-place update**, which is what dropping one member from `member_pipelines`
+and one entry from the routing table is. `-target`ing the group and routing
+does not help: the pipeline's destroy is pulled in as a dependency of both.
+
+Nothing is left broken by the failed apply — the pipeline, group, and routing
+are all still in place and consistent — but the removal does not complete.
+
+Workarounds, in order of preference:
+
+1. **Tear the stack down and reapply it** without the entry, if an interruption
+   in log processing is acceptable. A full `terraform destroy` orders correctly,
+   because then the group and routing are destroyed rather than updated.
+2. **`terraform state rm` the member pipeline, apply** so the group and routing
+   drop the reference, then delete the now-unmanaged pipeline object in the UI
+   or via the API. *Untested — reason it through before relying on it.*
+
+If you hardcode an ID instead of referencing the resource you lose the graph
+edge entirely, and you get the same failure with no ordering attempted at all.
 
 ### Tearing down the whole group
 
@@ -352,12 +377,32 @@ one that punishes you for skipping this step.
   Keep it stable and descriptive.
 - **`matcher` is DQL.** Inside HCL, `"` must be escaped: `matchesValue(k8s.namespace.name, \"checkout\")`.
 - **Buckets must already exist.** `bucketAssignment` does not create the Grail
-  bucket. Manage it with `dynatrace_grail_storage_bucket` or expect an apply error.
+  bucket, and the provider exposes no bucket data source, so a wrong or missing
+  name is not caught by `terraform plan`. The apply fails partway, after some
+  pipelines have already been created. Create the bucket out of band and
+  confirm its exact name before referencing it here. The name is always a
+  variable, never hardcoded: `var.target_bucket` in
+  [`01-minimal/`](01-minimal/), and `bucket_name` on each entry of
+  `var.applications` in [`03-app-pipelines/`](03-app-pipelines/). Both are
+  yours to replace per tenant.
 - **Assign `dt.security_context` in a base pipeline**, before the member
   placeholder, and exclude `securityContext` from `member_stages`. Otherwise a
   team can widen access to its own data.
 - **Drop early.** A `drop` processor at the top of the processing stage keeps
   noise out of metric extraction and billing.
+- **`dt.*` is a reserved field namespace.** A `fieldsAdd` processor writing to
+  e.g. `dt.openpipeline.managed_by` is rejected with
+  `name: Must not be modified`. Stamp provenance on an unprefixed field
+  (`managed_by`) instead.
+- **No `default_value` on a field-typed `securityContext` or `costAllocation`.**
+  The provider schema marks it `optional`, but the API rejects it with
+  `defaultValue: Must be null`. Records missing the source field get no
+  security context rather than a fallback one, so choose a source field that is
+  always present.
+- **A provider schema check is not a validity check.** Both gotchas above pass
+  `terraform validate` and produce a clean `terraform plan`; they only fail at
+  `apply`, against the real API. Verify examples with an apply on a throwaway
+  environment, not just `terraform providers schema -json`.
 
 ---
 

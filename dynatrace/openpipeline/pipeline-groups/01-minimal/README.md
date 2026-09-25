@@ -26,7 +26,22 @@ set DYNATRACE_ENV_URL=https://<env-id>.apps.dynatrace.com
 set DYNATRACE_PLATFORM_TOKEN=dt0s16.********
 ```
 
-### 2. Apply
+### 2. Choose the Grail bucket
+
+The member pipeline writes to `var.target_bucket`, which defaults to
+`default_logs` — the built-in logs bucket, present on every tenant, so this
+example applies as-is with nothing to replace.
+
+To write somewhere else, **replace it with a bucket that already exists** in
+the target tenant; `bucketAssignment` does not create one. Pass it on `plan`,
+not `apply` — a saved plan file already has the value baked in and
+`terraform apply tf.plan` rejects `-var`:
+
+```
+terraform plan -var="target_bucket=<existing-bucket>" -out=tf.plan
+```
+
+### 3. Apply
 
 Identical on macOS, Linux, and Windows:
 

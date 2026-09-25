@@ -12,9 +12,11 @@ crash.*.log
 *.tfvars.json
 !*.tfvars.example
 
-# Plan output
+# Plan output. The examples use `-out=tf.plan`, so plain *.plan must be
+# ignored too — a saved plan can contain variable values.
 *.tfplan
 *.tfplan.*
+*.plan
 
 # Override files (local-only experiments)
 override.tf
