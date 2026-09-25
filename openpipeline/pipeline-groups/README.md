@@ -12,7 +12,7 @@ Everything here runs on macOS, Linux, and Windows. The `terraform` commands are
 byte-identical across all three; only environment variables, file copies, and
 shell quoting differ, and each of those is given below for bash/zsh,
 PowerShell, and Command Prompt. See the
-[root README](../../../README.md#install-terraform) for installing Terraform on
+[root README](../../README.md#install-terraform) for installing Terraform on
 your platform.
 
 ---
@@ -144,7 +144,7 @@ post_member_base_pipeline_ids = ["vu9U3hXa3q0AAAAB..."]
 ```hcl
 data "terraform_remote_state" "base" {
   backend = "s3"
-  config  = { bucket = "tfstate", key = "dynatrace/openpipeline/base", region = "us-east-1" }
+  config  = { bucket = "tfstate", key = "openpipeline/base", region = "us-east-1" }
 }
 
 # then pass into the group:

@@ -13,7 +13,7 @@ repository.
 
 | Area | Description |
 |---|---|
-| [`dynatrace/openpipeline/`](dynatrace/openpipeline/) | OpenPipeline — resource naming across record types, the singleton routing hazard, and per-topic examples (currently pipelines, pipeline groups, and routing) |
+| [`openpipeline/`](openpipeline/) | OpenPipeline — resource naming across record types, the singleton routing hazard, and per-topic examples (currently pipelines, pipeline groups, and routing) |
 
 ## Prerequisites
 
@@ -148,21 +148,23 @@ terraform providers lock -platform=darwin_arm64 -platform=darwin_amd64 -platform
 
 ## Adding an example
 
-Create the directory:
+Create the directory. Examples are laid out as
+`<feature>/<topic>/<stack>` — for example
+`openpipeline/pipeline-groups/01-minimal`:
 
 ```sh
 # macOS / Linux
-mkdir -p <product-area>/<feature>/<stack>
+mkdir -p <feature>/<topic>/<stack>
 ```
 
 ```powershell
 # Windows — PowerShell
-New-Item -ItemType Directory -Force -Path <product-area>\<feature>\<stack>
+New-Item -ItemType Directory -Force -Path <feature>\<topic>\<stack>
 ```
 
 ```bat
 :: Windows — Command Prompt
-mkdir <product-area>\<feature>\<stack>
+mkdir <feature>\<topic>\<stack>
 ```
 
 Verify resource schemas against the provider rather than against documentation

@@ -13,7 +13,7 @@ with the topic you need; the shared background below applies to all of them.
 | [`pipeline-groups/`](pipeline-groups/) | Pipelines, pipeline groups, and routing. Object model, base vs. member pipelines, composition ordering, multi-stack layout, and the create/edit/delete lifecycle. |
 
 Not covered yet — ingest sources (`*_ingestsources`) and data forwarding
-(`*_dataforwarding`). See [adding an example](../../README.md#adding-an-example)
+(`*_dataforwarding`). See [adding an example](../README.md#adding-an-example)
 if you want to contribute one.
 
 ---
