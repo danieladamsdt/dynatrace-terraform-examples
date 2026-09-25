@@ -1,6 +1,6 @@
 # Dynatrace Terraform examples
 
-Reusable, customer-agnostic Terraform examples for configuring Dynatrace with
+Reusable Terraform examples for configuring Dynatrace with
 the [`dynatrace-oss/dynatrace`](https://registry.terraform.io/providers/dynatrace-oss/dynatrace/latest)
 provider.
 
