@@ -13,7 +13,7 @@ anywhere in this repository.
 
 | Area | Description |
 |---|---|
-| [`dynatrace/openpipeline/`](dynatrace/openpipeline/) | OpenPipeline pipelines, pipeline groups, and routing — object model, stack layout, and the create/edit/delete lifecycle |
+| [`dynatrace/openpipeline/pipeline-groups/`](dynatrace/openpipeline/pipeline-groups/) | OpenPipeline pipelines, pipeline groups, and routing — object model, stack layout, and the create/edit/delete lifecycle |
 
 ## Prerequisites
 
