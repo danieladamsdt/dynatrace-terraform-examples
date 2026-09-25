@@ -12,9 +12,33 @@ member pipeline or the routing table.
 Both are `group_role = "basePipeline"` and `routing = "notRoutable"`: nothing
 routes to them directly, they only execute as part of a group.
 
+Set your credentials first — see the
+[guide's credentials section](../README.md#5-credentials-and-permissions) for
+the bash/zsh, PowerShell, and Command Prompt forms.
+
+Copy the example variables file (the only step whose syntax is
+platform-specific), then edit it:
+
+```sh
+# macOS / Linux
+cp terraform.tfvars.example terraform.tfvars
 ```
-cp terraform.tfvars.example terraform.tfvars   # edit
-terraform init && terraform apply
+
+```powershell
+# Windows — PowerShell
+Copy-Item terraform.tfvars.example terraform.tfvars
+```
+
+```bat
+:: Windows — Command Prompt
+copy terraform.tfvars.example terraform.tfvars
+```
+
+Then, identically on every platform:
+
+```
+terraform init
+terraform apply
 terraform output      # feed these IDs into ../03-app-pipelines
 ```
 

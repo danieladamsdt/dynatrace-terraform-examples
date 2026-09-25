@@ -58,10 +58,24 @@ in the UI and rules owned by another Terraform state or by Monaco.
 
 This is the single most destructive thing in this directory, and it applies to
 all 13 record types. Before adopting an environment that already has
-OpenPipeline configuration, export what exists:
+OpenPipeline configuration, export what exists.
 
+The export utility is the provider binary itself, run directly. On Windows it
+carries an `.exe` suffix:
+
+```sh
+# macOS / Linux
+./terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_routing
 ```
-terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_routing
+
+```powershell
+# Windows — PowerShell
+.\terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_routing
+```
+
+```bat
+:: Windows — Command Prompt
+terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_routing
 ```
 
 The consequences and the safe adoption path are covered in
@@ -69,11 +83,26 @@ The consequences and the safe adoption path are covered in
 
 ## Credentials
 
-Shared by every example here:
+Shared by every example here. Set them in whichever shell you run Terraform
+from; the `terraform` commands themselves are identical on macOS, Linux, and
+Windows.
 
-```
+```sh
+# macOS / Linux (bash, zsh) — also Git Bash and WSL on Windows
 export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
 export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
+```
+
+```powershell
+# Windows — PowerShell
+$env:DYNATRACE_ENV_URL = "https://<env-id>.apps.dynatrace.com"
+$env:DYNATRACE_PLATFORM_TOKEN = "dt0s16.********"
+```
+
+```bat
+:: Windows — Command Prompt (no quotes: set would store them as part of the value)
+set DYNATRACE_ENV_URL=https://<env-id>.apps.dynatrace.com
+set DYNATRACE_PLATFORM_TOKEN=dt0s16.********
 ```
 
 Required scopes: `settings:objects:read` and `settings:objects:write`.

@@ -27,8 +27,32 @@ applications = {
 | [`routing.tf`](routing.tf) | The singleton routing table, priority-ordered, catch-all last |
 | [`locals.tf`](locals.tf) | Routing order and "does this pipeline need a processing stage" |
 
+Set your credentials first — see the
+[guide's credentials section](../README.md#5-credentials-and-permissions) for
+the bash/zsh, PowerShell, and Command Prompt forms.
+
+Copy the example variables file (the only step whose syntax is
+platform-specific), then edit it, including the base pipeline IDs from
+[`../02-base-pipelines`](../02-base-pipelines/):
+
+```sh
+# macOS / Linux
+cp terraform.tfvars.example terraform.tfvars
 ```
-cp terraform.tfvars.example terraform.tfvars   # edit, incl. base pipeline IDs from ../02-base-pipelines
+
+```powershell
+# Windows — PowerShell
+Copy-Item terraform.tfvars.example terraform.tfvars
+```
+
+```bat
+:: Windows — Command Prompt
+copy terraform.tfvars.example terraform.tfvars
+```
+
+Then, identically on every platform:
+
+```
 terraform init
 terraform plan -out=tf.plan
 terraform apply tf.plan

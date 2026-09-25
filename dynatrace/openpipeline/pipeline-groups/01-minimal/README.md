@@ -6,10 +6,31 @@ The four objects in one file, with nothing abstracted away. Read
 Creates: one base pipeline, one member pipeline, one pipeline group, and the
 logs routing table.
 
-```
+### 1. Set credentials
+
+```sh
+# macOS / Linux (bash, zsh) — also Git Bash and WSL on Windows
 export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
 export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
+```
 
+```powershell
+# Windows — PowerShell
+$env:DYNATRACE_ENV_URL = "https://<env-id>.apps.dynatrace.com"
+$env:DYNATRACE_PLATFORM_TOKEN = "dt0s16.********"
+```
+
+```bat
+:: Windows — Command Prompt (no quotes: set would store them as part of the value)
+set DYNATRACE_ENV_URL=https://<env-id>.apps.dynatrace.com
+set DYNATRACE_PLATFORM_TOKEN=dt0s16.********
+```
+
+### 2. Apply
+
+Identical on macOS, Linux, and Windows:
+
+```
 terraform init
 terraform plan -out=tf.plan
 terraform apply tf.plan

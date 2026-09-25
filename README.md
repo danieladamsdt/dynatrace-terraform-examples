@@ -1,6 +1,6 @@
 # Dynatrace Terraform examples
 
-Reusable Terraform examples for configuring Dynatrace with
+Reusable, customer-agnostic Terraform examples for configuring Dynatrace with
 the [`dynatrace-oss/dynatrace`](https://registry.terraform.io/providers/dynatrace-oss/dynatrace/latest)
 provider.
 
@@ -17,21 +17,93 @@ anywhere in this repository.
 
 ## Prerequisites
 
-- Terraform >= 1.5 (the examples use optional object attributes and variable
-  `validation` blocks). Install on macOS with:
-  ```
-  brew install hashicorp/tap/terraform
-  ```
-- A Dynatrace platform environment and a **platform token** or OAuth client.
-  Classic API tokens work but create ownerless, world-writable settings objects
-  — see each example's notes.
+Terraform >= 1.5 (the examples use optional object attributes and variable
+`validation` blocks), and a Dynatrace platform environment with a **platform
+token** or OAuth client.
 
-Credentials are always supplied through the environment, never committed:
+The examples run unchanged on macOS, Linux, and Windows. The `terraform`
+commands are identical everywhere; only the shell syntax for setting
+environment variables and copying files differs, so every setup snippet in this
+repo is given for bash/zsh, PowerShell, and Command Prompt. On Windows, Git
+Bash and WSL both take the macOS/Linux syntax as-is.
+
+### Install Terraform
+
+**macOS** — Homebrew:
+
+```sh
+brew tap hashicorp/tap
+brew install hashicorp/tap/terraform
+```
+
+**Linux** — Debian/Ubuntu, from the HashiCorp apt repository:
+
+```sh
+wget -O- https://apt.releases.hashicorp.com/gpg | \
+  sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] \
+  https://apt.releases.hashicorp.com $(lsb_release -cs) main" | \
+  sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install terraform
+```
+
+**Linux** — RHEL, Fedora, Amazon Linux:
+
+```sh
+sudo dnf install -y dnf-plugins-core
+sudo dnf config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+sudo dnf install -y terraform
+```
+
+**Windows** — winget or Chocolatey, in an elevated shell:
+
+```powershell
+winget install --id HashiCorp.Terraform -e
+# or
+choco install terraform
+```
+
+**Any platform** — download the zip from
+[developer.hashicorp.com/terraform/install](https://developer.hashicorp.com/terraform/install),
+extract it, and put the binary on your `PATH`.
+
+Confirm the install — same command on every platform:
 
 ```
+terraform -version
+```
+
+### Dynatrace credentials
+
+Credentials are always supplied through the environment, never committed, and
+only last for the current shell session.
+
+**macOS / Linux** (bash, zsh) — also Git Bash and WSL on Windows:
+
+```sh
 export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
 export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
 ```
+
+**Windows** — PowerShell (and PowerShell 7 on macOS/Linux):
+
+```powershell
+$env:DYNATRACE_ENV_URL = "https://<env-id>.apps.dynatrace.com"
+$env:DYNATRACE_PLATFORM_TOKEN = "dt0s16.********"
+```
+
+**Windows** — Command Prompt:
+
+```bat
+set DYNATRACE_ENV_URL=https://<env-id>.apps.dynatrace.com
+set DYNATRACE_PLATFORM_TOKEN=dt0s16.********
+```
+
+Do not quote the values in Command Prompt — `set` would store the quotes as
+part of the value.
+
+Classic API tokens work but create ownerless, world-writable settings objects —
+see each example's notes.
 
 ## Conventions
 
@@ -57,6 +129,8 @@ one.
    committing.
 8. **Pin the provider** with `version = "~> 1.105"` and record which provider
    version the schema was verified against.
+9. **Setup steps are given for macOS/Linux, PowerShell, and Command Prompt**
+   wherever the syntax differs, so an example is runnable on any platform.
 
 ### Lock files
 
@@ -64,18 +138,50 @@ one.
 repo — a committed lock file goes stale and forces `terraform init -upgrade` on
 everyone who copies a directory. **In a real deployment, commit the lock file.**
 
-## Adding an example
+A lock file records provider hashes per platform. If your team runs Terraform on
+more than one OS (for example laptops on macOS and CI on Linux), record all of
+them so nobody hits a checksum error:
 
 ```
+terraform providers lock -platform=darwin_arm64 -platform=darwin_amd64 -platform=linux_amd64 -platform=windows_amd64
+```
+
+## Adding an example
+
+Create the directory:
+
+```sh
+# macOS / Linux
 mkdir -p <product-area>/<feature>/<stack>
 ```
 
+```powershell
+# Windows — PowerShell
+New-Item -ItemType Directory -Force -Path <product-area>\<feature>\<stack>
+```
+
+```bat
+:: Windows — Command Prompt
+mkdir <product-area>\<feature>\<stack>
+```
+
 Verify resource schemas against the provider rather than against documentation
-or memory:
+or memory, after `terraform init`:
+
+```sh
+# macOS / Linux, Git Bash, WSL, PowerShell 7
+terraform providers schema -json > schema.json
+```
+
+```powershell
+# Windows PowerShell 5.1 — `>` writes UTF-16, which breaks jq and most JSON parsers
+terraform providers schema -json | Out-File -Encoding utf8 schema.json
+```
+
+Then check these pass — identical on every platform — and note the provider
+version you verified against in the example's README:
 
 ```
-terraform providers schema -json > schema.json    # after terraform init
+terraform fmt -check -recursive
+terraform validate
 ```
-
-Then check `terraform fmt -check -recursive` and `terraform validate` pass, and
-note the provider version you verified against in the example's README.

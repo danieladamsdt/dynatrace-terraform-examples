@@ -8,6 +8,13 @@ Examples here use **logs**. Every other record type works identically — swap
 `logs` for `events`, `bizevents`, `spans`, `metrics`, `davis_problems`,
 `security_events`, `usersessions`, and so on in the resource names.
 
+Everything here runs on macOS, Linux, and Windows. The `terraform` commands are
+byte-identical across all three; only environment variables, file copies, and
+shell quoting differ, and each of those is given below for bash/zsh,
+PowerShell, and Command Prompt. See the
+[root README](../../../README.md#install-terraform) for installing Terraform on
+your platform.
+
 ---
 
 ## 1. The object model
@@ -80,9 +87,11 @@ Three consequences:
    environment must live in exactly one state file. Split across two stacks,
    whichever applies last silently deletes the other's rules.
 2. **Export before you adopt.** On an environment that already has routing,
-   capture it first:
-   ```
-   terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_routing
+   capture it first with the provider binary's export mode — `./` on
+   macOS/Linux, `.exe` on Windows (see
+   [section 6](#6-adopting-an-environment-that-already-has-openpipeline-config)):
+   ```sh
+   ./terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_routing
    ```
 3. **Always end with a catch-all.** Entries are evaluated top to bottom and the
    first matcher that hits wins. Without a final `matcher = "true"` entry
@@ -188,12 +197,26 @@ recreates the pipeline**, which changes its settings object ID and therefore rew
 group membership and routing rule too. If you only want a new label, change
 `display_name` and leave the key alone.
 
-To rename the key without a gap in processing, `terraform state mv` first:
+To rename the key without a gap in processing, `terraform state mv` first.
+The resource addresses contain double quotes, so the quoting differs per shell:
 
-```
+```sh
+# macOS / Linux
 terraform state mv \
   'dynatrace_openpipeline_v2_logs_pipelines.member["old-key"]' \
   'dynatrace_openpipeline_v2_logs_pipelines.member["new-key"]'
+```
+
+```powershell
+# Windows — PowerShell (backtick continues the line, single quotes are literal)
+terraform state mv `
+  'dynatrace_openpipeline_v2_logs_pipelines.member["old-key"]' `
+  'dynatrace_openpipeline_v2_logs_pipelines.member["new-key"]'
+```
+
+```bat
+:: Windows — Command Prompt (one line, inner quotes backslash-escaped)
+terraform state mv "dynatrace_openpipeline_v2_logs_pipelines.member[\"old-key\"]" "dynatrace_openpipeline_v2_logs_pipelines.member[\"new-key\"]"
 ```
 
 …then update the map. (This still replaces the object if `custom_id` differs;
@@ -213,9 +236,29 @@ it by removing the reference and applying, then destroying the pipeline.
 
 ### Tearing down the whole group
 
-```
+Run these from the `pipeline-groups/` directory. `&&` is not valid in Windows
+PowerShell 5.1, so each stack is torn down as its own step:
+
+```sh
+# macOS / Linux
 cd 03-app-pipelines && terraform destroy   # members, group, routing
 cd ../02-base-pipelines && terraform destroy
+```
+
+```powershell
+# Windows — PowerShell
+cd 03-app-pipelines
+terraform destroy          # members, group, routing
+cd ..\02-base-pipelines
+terraform destroy
+```
+
+```bat
+:: Windows — Command Prompt
+cd 03-app-pipelines
+terraform destroy
+cd ..\02-base-pipelines
+terraform destroy
 ```
 
 Destroying the routing resource removes the managed table. Make sure you know
@@ -225,9 +268,24 @@ what the environment falls back to before doing this in production.
 
 ## 5. Credentials and permissions
 
-```
+Set these in the shell you run Terraform from. They last for that session only.
+
+```sh
+# macOS / Linux (bash, zsh) — also Git Bash and WSL on Windows
 export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
 export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
+```
+
+```powershell
+# Windows — PowerShell
+$env:DYNATRACE_ENV_URL = "https://<env-id>.apps.dynatrace.com"
+$env:DYNATRACE_PLATFORM_TOKEN = "dt0s16.********"
+```
+
+```bat
+:: Windows — Command Prompt (no quotes: set would store them as part of the value)
+set DYNATRACE_ENV_URL=https://<env-id>.apps.dynatrace.com
+set DYNATRACE_PLATFORM_TOKEN=dt0s16.********
 ```
 
 Required scopes: `settings:objects:read` and `settings:objects:write`.
@@ -245,13 +303,38 @@ If a classic API token is unavoidable, also set
 
 ## 6. Adopting an environment that already has OpenPipeline config
 
-Export what exists before writing any HCL:
+Export what exists before writing any HCL. The export utility is the Dynatrace
+provider binary run directly — after `terraform init` you will find it under
+`.terraform/providers/registry.terraform.io/dynatrace-oss/dynatrace/<version>/<os_arch>/`,
+or you can download it from the
+[provider releases](https://github.com/dynatrace-oss/terraform-provider-dynatrace/releases).
 
+```sh
+# macOS / Linux
+./terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_pipelines
+./terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_pipelinegroups
+./terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_routing
 ```
-terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_pipelines
-terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_pipelinegroups
-terraform-provider-dynatrace -export dynatrace_openpipeline_v2_logs_routing
+
+```powershell
+# Windows — PowerShell
+.\terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_pipelines
+.\terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_pipelinegroups
+.\terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_routing
 ```
+
+```bat
+:: Windows — Command Prompt
+terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_pipelines
+terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_pipelinegroups
+terraform-provider-dynatrace.exe -export dynatrace_openpipeline_v2_logs_routing
+```
+
+On macOS/Linux the binary needs the execute bit (`chmod +x
+terraform-provider-dynatrace`) if you downloaded it rather than letting
+`terraform init` fetch it. On macOS, Gatekeeper may also quarantine a
+downloaded binary — clear it with
+`xattr -d com.apple.quarantine terraform-provider-dynatrace`.
 
 Then `terraform import` each object by its settings object ID, and confirm
 `terraform plan` is empty before changing anything. The routing table is the
