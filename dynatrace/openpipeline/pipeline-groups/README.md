@@ -79,7 +79,8 @@ composition. See [`03-app-pipelines/pipeline_group.tf`](03-app-pipelines/pipelin
 `dynatrace_openpipeline_v2_logs_routing` is **not one rule**. It is the entire
 logs routing table for the environment. Applying it **replaces every logs
 routing rule in the tenant**, including rules created in the UI and rules
-managed by another Terraform state or by Monaco.
+managed by another Terraform state or by Dynatrace Configuration as Code
+(Monaco).
 
 Three consequences:
 

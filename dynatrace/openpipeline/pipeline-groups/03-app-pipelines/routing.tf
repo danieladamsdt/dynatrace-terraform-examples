@@ -4,7 +4,8 @@
 # dynatrace_openpipeline_v2_logs_routing represents the ENTIRE logs routing
 # table for the tenant, not one rule. Applying it overwrites every logs routing
 # rule in the environment, including rules created in the UI and rules managed
-# by another Terraform workspace or by Monaco.
+# by another Terraform workspace or by Dynatrace Configuration as Code
+# (Monaco).
 #
 # Consequences:
 #   * All logs routing for one Dynatrace environment must be owned by exactly

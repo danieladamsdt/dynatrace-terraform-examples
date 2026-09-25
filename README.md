@@ -6,8 +6,8 @@ provider.
 
 Everything here is a **template**, not a deployable configuration. Copy a
 directory, point it at your tenant, fill in the variables. No tenant URL,
-token, account ID, bucket name, team name, or customer name is hardcoded
-anywhere in this repository.
+token, account ID, bucket name, or team name is hardcoded anywhere in this
+repository.
 
 ## Contents
 
@@ -110,7 +110,7 @@ see each example's notes.
 Every example in this repo follows these rules. Please keep them when adding
 one.
 
-1. **No customer-identifying values.** Placeholders are generic
+1. **No organization-specific values.** Placeholders are generic
    (`checkout-api`, `payments`, `example-team`). Anything environment-specific
    is a variable with a sensible default or no default at all.
 2. **Credentials come from the environment.** Provider credential variables

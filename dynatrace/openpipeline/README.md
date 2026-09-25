@@ -54,7 +54,8 @@ Examples in this directory use `logs`.
 `dynatrace_openpipeline_v2_<record_type>_routing` is **not one rule**. It is
 the entire routing table for that record type in that environment. Applying it
 replaces every routing rule of that type in the tenant, including rules created
-in the UI and rules owned by another Terraform state or by Monaco.
+in the UI and rules owned by another Terraform state or by Dynatrace
+Configuration as Code (Monaco).
 
 This is the single most destructive thing in this directory, and it applies to
 all 13 record types. Before adopting an environment that already has

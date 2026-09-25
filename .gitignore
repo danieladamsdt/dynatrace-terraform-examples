@@ -6,7 +6,8 @@
 crash.log
 crash.*.log
 
-# Variable files — may contain tenant URLs, tokens, customer names.
+# Variable files — may contain tenant URLs, tokens, and names specific to
+# your organization.
 # Only the *.example templates are tracked.
 *.tfvars
 *.tfvars.json
