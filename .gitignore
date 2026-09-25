@@ -1,0 +1,30 @@
+# Terraform state — never commit, may contain secrets
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+
+# Variable files — may contain tenant URLs, tokens, customer names.
+# Only the *.example templates are tracked.
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# Plan output
+*.tfplan
+*.tfplan.*
+
+# Override files (local-only experiments)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI config
+.terraformrc
+terraform.rc
+
+# macOS
+.DS_Store

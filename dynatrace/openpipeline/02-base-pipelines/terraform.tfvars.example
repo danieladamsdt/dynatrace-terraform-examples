@@ -1,0 +1,13 @@
+# Copy to terraform.tfvars and adjust. Never commit the real file.
+#
+# Credentials come from the environment instead:
+#   export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
+#   export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
+
+name_prefix = "platform"
+
+security_context_field    = "k8s.namespace.name"
+security_context_fallback = "unassigned"
+
+cost_center_field    = "k8s.cluster.name"
+cost_center_fallback = "unattributed"

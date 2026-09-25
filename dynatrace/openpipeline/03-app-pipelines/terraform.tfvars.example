@@ -1,0 +1,56 @@
+# Copy to terraform.tfvars and adjust. One copy per Dynatrace environment.
+# Never commit the real file — .gitignore only tracks *.tfvars.example.
+#
+# Credentials come from the environment:
+#   export DYNATRACE_ENV_URL="https://<env-id>.apps.dynatrace.com"
+#   export DYNATRACE_PLATFORM_TOKEN="dt0s16.********"
+
+environment_name    = "dev"
+pipeline_group_name = "Application logs"
+
+# From `terraform output` in ../02-base-pipelines.
+pre_member_base_pipeline_ids  = ["vu9U3hXa3q0AAAABABh..."]
+post_member_base_pipeline_ids = ["vu9U3hXa3q0AAAABABl..."]
+
+# Teams may only define these stages; everything else is the platform's.
+member_stages = {
+  type    = "include"
+  include = ["processing", "metricExtraction", "storage"]
+}
+
+applications = {
+  # Map key becomes the pipeline custom_id. Changing it recreates the pipeline.
+  "checkout-api" = {
+    display_name   = "Checkout API logs"
+    route_priority = 100
+    route_matcher  = "matchesValue(k8s.namespace.name, \"checkout\")"
+    bucket_name    = "logs_checkout"
+
+    added_fields = {
+      "owning_team" = "payments"
+      "tier"        = "1"
+    }
+
+    drop_matcher = "matchesPhrase(content, \"health check\")"
+  }
+
+  "search-service" = {
+    display_name   = "Search service logs"
+    route_priority = 200
+    route_matcher  = "matchesValue(k8s.namespace.name, \"search\")"
+    bucket_name    = "logs_search"
+
+    added_fields = {
+      "owning_team" = "discovery"
+    }
+
+    dql_script = "fieldsAdd log.level = upper(loglevel)"
+  }
+
+  # Minimal entry: routing and group membership only, no processing.
+  "legacy-batch" = {
+    display_name   = "Legacy batch job logs"
+    route_priority = 900
+    route_matcher  = "matchesValue(host.name, \"batch-runner-01\")"
+  }
+}
