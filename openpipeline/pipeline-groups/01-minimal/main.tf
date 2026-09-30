@@ -9,6 +9,8 @@
 # 1. BASE PIPELINE ----------------------------------------------------------
 # Shared logic every member of the group must run. Owned by the platform team.
 # notRoutable: nothing routes here directly; it only runs as part of a group.
+# group_role "compositionPipeline" is the deprecated former name of
+# "basePipeline" -- same role, old spelling. Use basePipeline.
 resource "dynatrace_openpipeline_v2_logs_pipelines" "base" {
   display_name = "${var.name_prefix} base"
   custom_id    = "${var.name_prefix}-base"

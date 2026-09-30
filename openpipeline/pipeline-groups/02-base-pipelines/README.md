@@ -12,6 +12,10 @@ member pipeline or the routing table.
 Both are `group_role = "basePipeline"` and `routing = "notRoutable"`: nothing
 routes to them directly, they only execute as part of a group.
 
+`compositionPipeline` is the deprecated former name of this role. The provider
+still accepts it, but use `basePipeline` — see
+[migrating off `compositionPipeline`](../README.md#migrating-off-compositionpipeline).
+
 Set your credentials first — see the
 [guide's credentials section](../README.md#5-credentials-and-permissions) for
 the bash/zsh, PowerShell, and Command Prompt forms.

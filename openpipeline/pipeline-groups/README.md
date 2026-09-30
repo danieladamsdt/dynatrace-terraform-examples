@@ -35,8 +35,15 @@ A pipeline's `group_role` decides what it is:
   executes as part of a group.
 - **`memberPipeline`** — team-owned logic for one application. Set
   `routing = "routable"` so routing rules can target it.
-- **`compositionPipeline`** — a pipeline referenced from a group's composition
-  that is not a reusable base pipeline.
+
+> **`compositionPipeline` is deprecated — use `basePipeline`.** It is the
+> former name of the same role, not a third kind of pipeline. The provider
+> still accepts it (the `group_role` enum is `basePipeline`,
+> `compositionPipeline`, `memberPipeline` as of v1.105.0), so existing
+> configuration keeps applying. Write `basePipeline` in anything new; every
+> example in this directory does. Switching an existing pipeline over is not
+> a free edit — `group_role` is `ForceNew`, so it replaces the object. See
+> [migrating off `compositionPipeline`](#migrating-off-compositionpipeline).
 
 ### How they reference each other
 
@@ -222,6 +229,30 @@ terraform state mv "dynatrace_openpipeline_v2_logs_pipelines.member[\"old-key\"]
 
 …then update the map. (This still replaces the object if `custom_id` differs;
 it only avoids a destroy/create of unrelated resources.)
+
+### Migrating off `compositionPipeline`
+
+`compositionPipeline` is the deprecated former name of `basePipeline`. The two
+describe the same role, so the migration is a one-word change to `group_role`
+— but because `group_role` is `ForceNew`, that word replaces the pipeline and
+issues it a **new settings object ID**. What else has to move depends on how
+the group reaches that ID:
+
+- **Same state as the group** — if the composition references
+  `dynatrace_openpipeline_v2_logs_pipelines.<name>.id`, as in
+  [`01-minimal/main.tf`](01-minimal/main.tf), Terraform rebuilds the pipeline
+  and rewrites the group's composition in one apply. Nothing to do by hand.
+- **ID passed across stacks as a string** — the
+  [`02-base-pipelines`](02-base-pipelines/) →
+  [`03-app-pipelines`](03-app-pipelines/) split. Apply the base stack, take
+  fresh `terraform output`, and only then update the consuming stack's
+  `pre_member_base_pipeline_ids` / `post_member_base_pipeline_ids`. Applying
+  them in the other order points the group at a destroyed object.
+
+Either way the pipeline drops out of the composition for the length of the
+replacement, and records ingested in that window skip its processing. If that
+matters, add the `basePipeline` alongside the old one, move the composition
+entry over, then delete the `compositionPipeline` — three applies, no gap.
 
 ### Deleting an application
 

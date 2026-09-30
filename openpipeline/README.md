@@ -31,6 +31,19 @@ The provider carries two generations of OpenPipeline resources:
 
 Everything in this directory uses `v2`.
 
+## `compositionPipeline` is deprecated — use `basePipeline`
+
+A pipeline's `group_role` has two meaningful values: `basePipeline` (shared
+logic a group forces its members to run) and `memberPipeline` (logic for one
+application). `compositionPipeline` is the **deprecated former name of
+`basePipeline`** — the same role, not a third kind of pipeline.
+
+The provider still accepts `compositionPipeline`, so existing configuration
+keeps applying. Use `basePipeline` in anything new; every example here does.
+`group_role` is `ForceNew`, so converting an existing pipeline replaces the
+object and its settings ID — see
+[migrating off `compositionPipeline`](pipeline-groups/README.md#migrating-off-compositionpipeline).
+
 ## Resource naming
 
 Every v2 resource follows one pattern:
