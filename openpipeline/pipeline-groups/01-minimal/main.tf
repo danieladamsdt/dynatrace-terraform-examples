@@ -138,7 +138,7 @@ resource "dynatrace_openpipeline_v2_logs_routing" "this" {
 
     routing_entry {
       enabled             = true
-      description         = "Catch-all: everything else keeps the built-in behaviour"
+      description         = "Catch-all: everything else keeps the built-in behavior"
       pipeline_type       = "builtin"
       builtin_pipeline_id = "default"
       matcher             = "true"

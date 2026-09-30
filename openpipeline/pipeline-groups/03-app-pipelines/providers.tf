@@ -5,7 +5,7 @@
 # Platform tokens (or an OAuth client) are strongly preferred over classic API
 # tokens here. A settings object created with a classic API token has an empty
 # owner, which makes it world-readable/writable and means dynatrace_settings_permissions
-# cannot restrict it afterwards.
+# cannot restrict it afterward.
 provider "dynatrace" {
   dt_env_url     = var.dt_env_url
   platform_token = var.dt_platform_token

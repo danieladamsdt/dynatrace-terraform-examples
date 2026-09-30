@@ -8,7 +8,7 @@
 # table. Their IDs are exported and fed into the app stack as input.
 # ---------------------------------------------------------------------------
 
-# Runs BEFORE the member pipeline: normalise and classify while the record is
+# Runs BEFORE the member pipeline: normalize and classify while the record is
 # still untouched by team-specific logic.
 resource "dynatrace_openpipeline_v2_logs_pipelines" "pre_member" {
   display_name = "${var.name_prefix} base (pre-member)"

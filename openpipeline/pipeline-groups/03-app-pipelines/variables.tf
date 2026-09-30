@@ -88,7 +88,7 @@ variable "applications" {
       route_priority  Lower numbers are evaluated first. Must be unique.
       route_matcher   DQL matcher deciding which records enter this pipeline.
       bucket_name     Grail bucket to store into. Must already exist. Omit to
-                      leave storage at the group/default behaviour.
+                      leave storage at the group/default behavior.
       added_fields    Static fields added to every matching record.
       drop_matcher    Records matching this are dropped before anything else.
       dql_script      Free-form DQL processor, applied last.

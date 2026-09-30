@@ -30,7 +30,7 @@ applications = {
     route_matcher  = "matchesValue(k8s.namespace.name, \"checkout\")"
 
     # Uncomment and set to a Grail bucket that ALREADY EXISTS in the target
-    # tenant. Omitted, storage falls back to the group/default behaviour.
+    # tenant. Omitted, storage falls back to the group/default behavior.
     # bucket_name = "<existing-bucket>"
 
     added_fields = {

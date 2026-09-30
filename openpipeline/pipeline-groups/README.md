@@ -351,7 +351,7 @@ Required scopes: `settings:objects:read` and `settings:objects:write`.
 object created with a classic API token has an empty owner, which means:
 
 - the object is public — anyone with settings permissions can read and modify it;
-- `dynatrace_settings_permissions` cannot restrict it afterwards.
+- `dynatrace_settings_permissions` cannot restrict it afterward.
 
 If a classic API token is unavoidable, also set
 `DYNATRACE_HTTP_OAUTH_PREFERENCE=true`.
