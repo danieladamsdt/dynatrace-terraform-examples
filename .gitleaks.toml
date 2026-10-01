@@ -1,0 +1,51 @@
+# gitleaks configuration for dynatrace-terraform-examples.
+#
+# The built-in ruleset already covers generic high-entropy secrets, AWS/GCP/
+# Azure keys, GitHub tokens, etc. The rules below add Dynatrace-specific
+# patterns that the upstream ruleset does not include.
+#
+# Reference: https://github.com/gitleaks/gitleaks
+
+title = "dynatrace-terraform-examples"
+
+[extend]
+useDefault = true
+
+# ---------------------------------------------------------------------------
+# Dynatrace-specific rules
+# ---------------------------------------------------------------------------
+
+[[rules]]
+id          = "dynatrace-api-token"
+description = "Dynatrace API or platform token"
+# Format: dt0<type><version>.<24-64 alphanum>.<64+ alphanum>
+# Examples: dt0c01.XXX.YYY  dt0s16.XXX.YYY
+regex       = '''dt0[a-z]\d{2}\.[A-Z0-9]{24,64}\.[A-Z0-9]{64,}'''
+tags        = ["dynatrace", "token", "secret"]
+
+[[rules]]
+id          = "dynatrace-env-url"
+description = "Hardcoded Dynatrace environment URL"
+# Matches real env IDs (8-12 lowercase alphanum) but not the placeholder
+# pattern <env-id> used in example files (angle brackets exclude it).
+regex       = '''https://[a-z0-9]{8,12}\.(?:live|apps)\.dynatrace\.com'''
+tags        = ["dynatrace", "url"]
+
+[[rules]]
+id          = "dynatrace-email"
+description = "Dynatrace employee email address"
+regex       = '''[a-z][a-z0-9._%+-]+@dynatrace\.com'''
+tags        = ["pii", "email"]
+
+# ---------------------------------------------------------------------------
+# Allowlist: patterns that are intentionally placeholder-shaped and safe
+# ---------------------------------------------------------------------------
+
+[allowlist]
+description = "Known safe placeholder values in example files"
+regexes = [
+  # Masked token shown in comments: dt0s16.********
+  '''dt0[a-z]\d{2}\.\*+''',
+  # Placeholder URL in angle-bracket form: <env-id>.apps.dynatrace.com
+  '''<[^>]+>\.(?:live|apps)\.dynatrace\.com''',
+]
