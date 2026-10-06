@@ -14,6 +14,7 @@ repository.
 | Area | Description |
 |---|---|
 | [`openpipeline/`](openpipeline/) | OpenPipeline — resource naming across record types, the singleton routing hazard, and per-topic examples (currently pipelines, pipeline groups, and routing) |
+| [`rum/`](rum/) | Real User Monitoring — creating frontends (auto-injected, agentless, mobile), detection rules, and exporting/importing a frontend's full configuration |
 
 ## Prerequisites
 
@@ -115,7 +116,10 @@ one.
    is a variable with a sensible default or no default at all.
 2. **Credentials come from the environment.** Provider credential variables
    default to `null` so the provider falls back to `DYNATRACE_*` env vars.
-   Mark them `sensitive = true`.
+   Mark them `sensitive = true`. The one exception is [`rum/`](rum/): its
+   stacks call a platform REST API through the `restapi` provider, which has
+   no environment fallback, so they take required `TF_VAR_dt_env_url` and
+   `TF_VAR_dt_platform_token` variables instead.
 3. **Standard file layout** per stack: `versions.tf`, `providers.tf`,
    `variables.tf`, `locals.tf`, `outputs.tf`, and resource files named after
    what they contain.

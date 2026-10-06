@@ -1,0 +1,6 @@
+bundle_dir = "../03-export/bundle"
+
+# Both optional. frontend.name is unique per environment, so importing into the
+# environment the bundle came from needs a new name.
+frontend_name = "checkout-web-copy"
+display_name  = "Checkout Web (copy)"
