@@ -47,8 +47,8 @@ variable "existing_buckets" {
 
   validation {
     condition = alltrue([
-      for b in values(var.existing_buckets) : b.retention_days == floor(b.retention_days) && b.retention_days >= 1
+      for b in values(var.existing_buckets) : b.retention_days == floor(b.retention_days) && b.retention_days >= 1 && b.retention_days <= 3657
     ])
-    error_message = "retention_days must be a whole number of days, at least 1."
+    error_message = "retention_days must be a whole number of days from 1 to 3657."
   }
 }

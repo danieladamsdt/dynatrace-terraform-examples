@@ -6,7 +6,13 @@
 #   .\check-plan.ps1 tf.plan; if ($?) { terraform apply tf.plan }
 param([string]$Plan = "tf.plan")
 
-$changes = (terraform show -json $Plan | ConvertFrom-Json).resource_changes |
+$planJson = terraform show -json $Plan | ConvertFrom-Json
+if ($planJson.errored) {
+  Write-Error "The plan errored, so it cannot be checked. Fix the plan error first."
+  exit 2
+}
+
+$changes = $planJson.resource_changes |
   Where-Object { $_.type -eq "dynatrace_platform_bucket" }
 
 $problems = foreach ($c in $changes) {

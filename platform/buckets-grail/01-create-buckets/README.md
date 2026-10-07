@@ -65,17 +65,21 @@ terraform plan -out=tf.plan
 terraform apply tf.plan
 ```
 
+The apply blocks on each bucket for about a minute while it activates; buckets
+are created in parallel. A bucket can still read `creating` for a moment after
+the apply finishes, so before pointing anything at a new bucket, confirm it is
+`active` — see [the activation note](../README.md#pitfalls).
+
 ## Editing an existing bucket
 
 Change `retention_days` or `display_name` in `terraform.tfvars`, then plan,
-check, and apply:
+check, and apply. [Why the check?](#what-check-plan-is-for)
 
 ```
-terraform plan -out=tf.plan
-./check-plan.sh tf.plan      # PowerShell: .\check-plan.ps1 tf.plan
-terraform apply tf.plan
+terraform plan -out=tf.plan && ./check-plan.sh tf.plan && terraform apply tf.plan
 ```
 
+Keep `display_name` in every entry you edit: leaving it out clears the label.
 A safe edit reads `1 to change, 0 to destroy` and `~ retention = 35 -> 60`.
 The bucket is updated in place: same bucket, same data.
 
@@ -88,6 +92,34 @@ Things that are refused, so you cannot do them by accident:
 | delete an entry from `buckets` | plan fails: `Instance cannot be destroyed` |
 | `terraform destroy` | fails: `Instance cannot be destroyed` |
 | `retention_days` **lower** | **plan succeeds**; `check-plan.sh` exits 1 |
+
+## What `check-plan` is for
+
+Terraform's own plan cannot tell you that a change will delete data. Lowering
+`retention_days` is shown as a harmless in-place update (`1 to change, 0 to
+destroy`), yet Grail then deletes every record older than the new value. The
+`check-plan.sh` (macOS, Linux, Git Bash, WSL; needs `jq`) and `check-plan.ps1`
+(PowerShell) scripts read a saved plan and stop you before the apply when it
+would:
+
+- shorten a bucket's retention, or
+- delete or replace a bucket.
+
+They print the bucket and the change, and exit non-zero. They change nothing
+and never contact Dynatrace. Chain them between plan and apply so a failure
+stops the apply:
+
+```sh
+terraform plan -out=tf.plan && ./check-plan.sh tf.plan && terraform apply tf.plan
+```
+
+```powershell
+terraform plan -out=tf.plan; if ($?) { .\check-plan.ps1 tf.plan; if ($?) { terraform apply tf.plan } }
+```
+
+Exit 1 means an unsafe plan; exit 2 means the check could not run (no `jq`, no
+plan file, or the plan itself errored). Either way, do not apply. If you really
+mean to shorten retention, apply the plan without the check after reading it.
 
 ## Clean up
 
