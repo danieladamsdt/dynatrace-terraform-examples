@@ -75,8 +75,17 @@ than the new value will be deleted, and apply without the check.
   Run `terraform plan` and read it before every apply, and keep the file in
   version control so it is the source of truth.
 - **Retention drops are not blocked by `prevent_destroy`.** See guard 2.
-- **A bucket reports `status = "updating"` for a while after a change.** Wait
-  for `active` before the next edit.
+- **Bucket status lags `apply`.** Creating a bucket took about a minute in
+  testing, and the live status was still `creating` just after `apply`
+  reported success. Edits are asynchronous too: a bucket reports `updating`, and
+  a read right after `apply` can show the previous value. Back-to-back applies
+  (create, then three edits in a row) all succeeded and converged on the last
+  value, so the stacks need no wait logic. Anything that **uses** a new bucket
+  immediately, such as an OpenPipeline `bucketAssignment` or ingest, can still
+  race the activation. The provider has no bucket data source to wait on, so
+  apply the buckets first, confirm `active` (`dtctl get buckets`), then apply
+  what depends on them. Not tested: a downstream resource created in the same
+  apply.
 - **Deleting a bucket is asynchronous** and can take a long time on a large
   bucket. The `terraform destroy` flow below is only for test buckets.
 - **Limits.** Retention is 1 to 3657 days. Bucket names are 3 to 100
