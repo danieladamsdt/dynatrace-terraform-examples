@@ -1,0 +1,3 @@
+frontend_name    = "checkout-web"
+application_type = "auto_injected" # auto_injected | agentless | mobile
+output_dir       = "bundle"

@@ -1,0 +1,16 @@
+# frontend.name of an existing auto-injected frontend.
+frontend_name = "checkout-web"
+
+# Highest precedence first. The specific rule must come before the broad one.
+detection_rules = [
+  {
+    matcher     = "URL_STARTS_WITH"
+    pattern     = "https://www.example.com/checkout"
+    description = "Checkout path — must outrank the site-wide rule"
+  },
+  {
+    matcher     = "DOMAIN_EQUALS"
+    pattern     = "www.example.com"
+    description = "Rest of the main site"
+  },
+]

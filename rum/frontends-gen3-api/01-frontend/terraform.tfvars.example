@@ -1,0 +1,17 @@
+display_name     = "Checkout Web"
+frontend_name    = "checkout-web"
+application_type = "auto_injected" # auto_injected | agentless | mobile
+
+# Auto-injected only.
+detection_rules = [
+  {
+    matcher     = "DOMAIN_EQUALS"
+    pattern     = "checkout.example.com"
+    description = "Production checkout"
+  },
+  {
+    matcher     = "URL_STARTS_WITH"
+    pattern     = "https://www.example.com/checkout"
+    description = "Checkout path on the main site"
+  },
+]

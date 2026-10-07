@@ -1,0 +1,16 @@
+# frontend.name of a frontend that already exists.
+frontend_name = "checkout-web"
+
+enabled_on_grail         = true
+cost_and_traffic_control = 100
+
+extra_settings = [
+  {
+    schema = "builtin:rum.web.xhr-exclusion"
+    value  = { xhrExclusionRule = "healthcheck" }
+  },
+  {
+    schema = "builtin:rum.web.xhr-exclusion"
+    value  = { xhrExclusionRule = "metrics" }
+  },
+]
