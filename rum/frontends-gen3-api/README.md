@@ -7,7 +7,7 @@
 > Use it only if you need Terraform to **create** frontends. To configure
 > frontends that already exist, use
 > [`../frontends-classic`](../frontends-classic/) — it needs nothing but the
-> Dynatrace provider.
+> Dynatrace provider. See [the side-by-side comparison](../README.md#two-directories--which-one-do-you-want).
 
 How to create and manage Dynatrace RUM frontends with Terraform: what a
 frontend is, which identifiers and APIs are involved, how detection rules work,

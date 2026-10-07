@@ -1,4 +1,8 @@
-# 03 — Export a frontend's configuration
+# 02 — Export a frontend's configuration
+
+> **Uses providers beyond `dynatrace-oss/dynatrace`:** `hashicorp/http` and `hashicorp/local` (it does not use the Dynatrace provider at all). This is the API variant,
+> outside the repository's provider policy; see
+> [the comparison](../../README.md#two-directories--which-one-do-you-want).
 
 Downloads the full configuration of an existing frontend into a bundle of JSON
 files. [`03-import`](../03-import/) uploads a bundle to create the same

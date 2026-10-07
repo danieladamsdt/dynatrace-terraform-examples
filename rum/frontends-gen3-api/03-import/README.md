@@ -1,4 +1,8 @@
-# 04 — Import a frontend's configuration
+# 03 — Import a frontend's configuration
+
+> **Uses providers beyond `dynatrace-oss/dynatrace`:** `Mastercard/restapi`, `hashicorp/time`, and `hashicorp/local`. This is the API variant,
+> outside the repository's provider policy; see
+> [the comparison](../../README.md#two-directories--which-one-do-you-want).
 
 Creates a frontend from a bundle written by [`02-export`](../02-export/): the
 frontend itself, every settings object in the bundle, and its detection rules,

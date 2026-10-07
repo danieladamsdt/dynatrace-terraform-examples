@@ -6,9 +6,14 @@ ordered detection rules, and download/upload of a frontend's configuration — u
 
 One limit up front: **this provider cannot create a frontend** with a platform
 token. [Creating the frontend first](#2-create-the-frontend-first) is a manual
-step, and everything else is Terraform. A sibling directory,
-[`../frontends-gen3-api`](../frontends-gen3-api/), creates frontends from
-Terraform too, but only by adding other providers.
+step, and everything else is Terraform.
+
+> **How this differs from [`../frontends-gen3-api`](../frontends-gen3-api/):** that
+> sibling directory *does* create frontends from Terraform, but it needs providers
+> beyond `dynatrace-oss/dynatrace` — `Mastercard/restapi`, `hashicorp/time`,
+> `hashicorp/local`, and `hashicorp/http` — which this repository otherwise does not
+> use. This directory needs nothing but the Dynatrace provider. See
+> [the comparison](../README.md#two-directories--which-one-do-you-want).
 
 Everything here runs on macOS, Linux, and Windows. The `terraform` commands are
 identical on all three; each stack's README gives environment-variable and

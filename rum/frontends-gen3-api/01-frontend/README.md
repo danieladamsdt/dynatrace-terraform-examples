@@ -1,5 +1,9 @@
 # 01 — Create a frontend
 
+> **Uses providers beyond `dynatrace-oss/dynatrace`:** `Mastercard/restapi` and `hashicorp/time`. This is the API variant,
+> outside the repository's provider policy; see
+> [the comparison](../../README.md#two-directories--which-one-do-you-want).
+
 Creates one frontend from a display name, a `frontend.name`, and an
 application type — `auto_injected`, `agentless`, or `mobile` — and optionally
 its detection rules.
