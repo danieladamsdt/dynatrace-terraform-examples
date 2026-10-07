@@ -133,7 +133,8 @@ exists).
 
 ## Reading a bucket's current settings
 
-In the Grail bucket management UI, or with the dtctl CLI:
+In the Grail bucket management UI, or with the
+[dtctl](https://github.com/dynatrace-oss/dtctl) CLI:
 
 ```
 dtctl get buckets
