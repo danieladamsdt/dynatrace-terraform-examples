@@ -1,0 +1,10 @@
+# Copy to terraform.tfvars (gitignored). Values MUST match the live bucket on
+# the first plan: read them with `dtctl get buckets` or in the Grail bucket
+# management UI. These names are placeholders.
+existing_buckets = {
+  logs_legacy_app = {
+    table          = "logs"
+    retention_days = 30
+    display_name   = "Legacy app logs"
+  }
+}

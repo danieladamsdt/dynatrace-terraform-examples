@@ -1,0 +1,28 @@
+# Copy to terraform.tfvars (gitignored) and adjust. The keys are bucket names;
+# these are placeholders. Names are global to the tenant and cannot be renamed
+# later.
+buckets = {
+  logs_checkout = {
+    table          = "logs"
+    retention_days = 35
+    display_name   = "Checkout logs"
+  }
+
+  spans_checkout = {
+    table          = "spans"
+    retention_days = 14
+    display_name   = "Checkout spans"
+  }
+
+  events_payments = {
+    table          = "events"
+    retention_days = 90
+    display_name   = "Payments events"
+  }
+
+  bizevents_payments = {
+    table          = "bizevents"
+    retention_days = 400
+    display_name   = "Payments business events"
+  }
+}
