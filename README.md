@@ -14,12 +14,13 @@ repository.
 | Area | Description |
 |---|---|
 | [`openpipeline/`](openpipeline/) | OpenPipeline — resource naming across record types, the singleton routing hazard, and per-topic examples (currently pipelines, pipeline groups, and routing) |
+| [`platform/`](platform/) | Platform configuration — creating and editing Grail buckets without ever deleting a bucket or its data ([`buckets-grail`](platform/buckets-grail/)) |
 | [`rum/`](rum/) | Real User Monitoring — configuring frontends, ordered detection rules, and downloading/uploading a frontend's configuration with the Dynatrace provider alone ([`frontends-classic`](rum/frontends-classic/)); plus an API variant that also creates frontends but **needs providers beyond `dynatrace-oss/dynatrace`** — `restapi`, `time`, `local`, `http` ([`frontends-gen3-api`](rum/frontends-gen3-api/)). See the [comparison](rum/README.md#two-directories--which-one-do-you-want) |
 
 ## Prerequisites
 
 Terraform >= 1.5 (the examples use optional object attributes and variable
-`validation` blocks; `rum/frontends-gen3-api/01-frontend` needs >= 1.9), and a Dynatrace platform environment with a **platform
+`validation` blocks; `rum/frontends-gen3-api/01-frontend` needs >= 1.9, and `platform/buckets-grail/02-import-existing-buckets` needs >= 1.7), and a Dynatrace platform environment with a **platform
 token** or OAuth client.
 
 The examples run unchanged on macOS, Linux, and Windows. The `terraform`
